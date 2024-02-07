@@ -7,26 +7,28 @@ import FakeStorage from "./FakeStorage";
 
 class FakeCreator {
   static createFakeMonths(): EntityStorage<WorkMonth> {
-    const date = new Date(2023, 0, 1);
-
-    const dayCount = new Date(2023, 1, 0).getDate();
-
-    const days = FakeCreator.createDays(dayCount);
-    const types = FakeCreator.createTypes();
-
-    const array = Array.from(
-      { length: 10 },
-      (_, index) =>
-        new WorkMonth({ id: index, date: date, days: days, types: types })
+    const array = Array.from({ length: 10 }, (_, index) =>
+      FakeCreator.createMonth(index, 2024, index)
     );
 
     return new FakeStorage<WorkMonth>(array);
   }
 
+  private static createMonth(id: number, year: number, month: number) {
+    const date = new Date(year, month, 1);
+
+    const dayCount = new Date(year, month + 1, 0).getDate();
+
+    const days = FakeCreator.createDays(dayCount);
+    const types = FakeCreator.createTypes();
+
+    return new WorkMonth({ id: id, date: date, days: days, types: types });
+  }
+
   private static createDays(count: number): WorkDay[] {
     const days = Array.from(
       { length: count },
-      (_, index) => new WorkDay({ day: index, works: [] })
+      (_, index) => new WorkDay({ day: index + 1, works: [] })
     );
 
     return days;
