@@ -1,83 +1,81 @@
 <script lang="ts">
-  import WorkMonth from "../../../data/WorkMonth";
-  import WorkDay from "../../../data/WorkDay";
-  import Work from "../../../data/Work";
-  import CalculationType from "../../../data/CalculationType";
-  import Divider from "../../shared/divider/Divider.svelte";
+  import type WorkDay from "$root/data/WorkDay";
+  import type WorkMonth from "$root/data/WorkMonth";
+  import EntityStorage from "$root/repository/EntityStorage";
+  import Divider from "$root/view/shared/divider/Divider.svelte";
+  import { getContext } from "svelte";
 
-  let now = Date.now();
+  export let params: any;
 
-  let list = Array<WorkDay>();
+  const storage = getContext(
+    EntityStorage<WorkMonth>
+  ) as EntityStorage<WorkMonth>;
 
-  for (let i = 1; i < 32; i++) {
-    let day = new WorkDay({
-      day: i,
-      works: [
-        new Work(204, "abon", CalculationType.commaSeparator, [
-          "1",
-          "1",
-          "1",
-          "1",
-        ]),
-        new Work(204, "pers", CalculationType.commaSeparator, [
-          "1",
-          "1",
-          "1",
-          "1",
-        ]),
-        new Work(204, "spli", CalculationType.commaSeparator, [
-          "1",
-          "1",
-          "1",
-          "1",
-        ]),
-      ],
-    });
+  function formatDay(date: Date, day: number) {
+    const temp = new Date(date);
 
-    list.push(day);
-  }
-
-  function getDay(date: Date) {
-    const options = {
+    const options: Intl.DateTimeFormatOptions = {
       weekday: "long",
-      year: "numeric",
-      month: "long",
       day: "numeric",
     };
-    const formattedDate = date.toLocaleDateString();
-    console.log(formattedDate); // Saturday, January 28, 2024
+
+    temp.setDate(day);
+
+    return temp.toLocaleDateString("en-US", options);
+  }
+  function formatMonth(date: Date) {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+    };
+
+    return date.toLocaleDateString("en-US", options);
   }
 </script>
 
 <ul class="list">
-  {#each list as item}
-    <li class="item">
-      <div class="header">
-        <span>
-          {item.day}
-        </span>
-        <span>
-          {1332}
-        </span>
-      </div>
+  {#if params.id}
+    {#await storage.getBy(params.id) then month}
+      <h1 class="month-title">
+        {formatMonth(month.date)}
+      </h1>
 
-      <Divider type="round" />
+      {#each month.days as item}
+        <li class="item">
+          <div class="header">
+            <span>
+              {formatDay(month.date, item.day)}
+            </span>
+            <span>
+              {1332}
+            </span>
+          </div>
 
-      {#each item.works as work}
-        <div class="work-info">
-          <span class="work-info-type">
-            {work.type}:&nbsp;
-          </span>
-          <span>
-            {work.units.join(",")}
-          </span>
-        </div>
+          <Divider type="round" />
+
+          {#each item.works as work}
+            <div class="work-info">
+              <span class="work-info-type">
+                {work.type}:&nbsp;
+              </span>
+              <span>
+                {work.units.join(",")}
+              </span>
+            </div>
+          {/each}
+        </li>
       {/each}
-    </li>
-  {/each}
+    {/await}
+  {/if}
 </ul>
 
 <style>
+  .month-title {
+    text-align: center;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+  }
+
   .list {
     list-style: none;
   }

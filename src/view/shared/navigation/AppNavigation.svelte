@@ -11,11 +11,6 @@
   <NavigationBarItem
     icon={Icons.calendar_month}
     label="Months"
-    click={() => onSelected(PageNames.work_month_detail)}
-  />
-  <NavigationBarItem
-    icon={Icons.calendar_month}
-    label="Months"
     click={() => onSelected(PageNames.work_month_list)}
   />
   <NavigationBarItem

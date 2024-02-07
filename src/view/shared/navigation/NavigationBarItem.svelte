@@ -47,8 +47,8 @@
   }
   .link-text {
     color: var(--text-primary);
-  }  
-  
+  }
+
   .panel-item:hover {
     background-color: #3949ab;
   }

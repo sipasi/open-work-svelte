@@ -5,24 +5,24 @@
   import Icons from "../../shared/icon/Icons";
   import MonthTile from "./MonthTile.svelte";
   import EntityStorage from "$root/repository/EntityStorage";
+  import { push } from "svelte-spa-router";
 
   const storage = getContext(
     EntityStorage<WorkMonth>
   ) as EntityStorage<WorkMonth>;
 
-  const loadData = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    return storage.getAll();
-  };
+  function onClick(item: WorkMonth) {
+    console.info(item);
+    push(`/months/${item.id.toString()}`);
+  }
 </script>
 
-{#await loadData()}
+{#await storage.getAll()}
   <p>loading...</p>
 {:then list}
   <ul class="adaptive-list-view">
     {#each list as item}
-      <MonthTile count={1} date={item.date} sum={233} />
+      <MonthTile date={item.date} sum={233} on:click={() => onClick(item)} />
     {/each}
   </ul>
   <IconFab icon={Icons.add} />

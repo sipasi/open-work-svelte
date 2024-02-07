@@ -1,5 +1,4 @@
 <script lang="ts">
-  export let count: number;
   export let date: Date;
   export let sum: number;
 
@@ -15,30 +14,29 @@
   }
 </script>
 
-<div tabindex="0" class="root" role="button">
+<button class="root" on:click>
   <p class="date">{formatDate(date)}</p>
-
   <p class="sum roboto-light">{sum}</p>
-</div>
+</button>
 
 <style>
   .date {
+    margin-bottom: 0.5rem;
   }
-  .sum {
-    color: #bdbdbd;
-  }
-
   .root {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-content: space-between;
 
-    font-weight: 500;
-
     padding: 20px;
 
     cursor: pointer;
+
+    background-color: transparent;
+    border: none;
+
+    font-weight: bold;
 
     transition: background-color 0.2s;
   }
@@ -52,8 +50,6 @@
   }
 
   .root:active {
-    position: relative;
-    display: block;
     transform: scale(1, 1.05);
   }
 </style>
