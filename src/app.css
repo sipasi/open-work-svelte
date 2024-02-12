@@ -22,6 +22,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+li {
+  list-style: none;
+  text-decoration: none;
+}
+
 /* scroll */
 body::-webkit-scrollbar {
   width: 0.25rem;
