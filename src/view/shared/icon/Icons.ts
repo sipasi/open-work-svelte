@@ -3,6 +3,8 @@ enum Icons {
   list_alt = "list_alt",
   settings = "settings",
   add = "add",
+  edit = "edit",
+  save = "save",
 }
 
 export default Icons;
