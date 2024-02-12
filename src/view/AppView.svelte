@@ -1,6 +1,7 @@
 <script lang="ts">
   import SettingsPage from "./setting/SettingsPage.svelte";
   import AppNavigation from "./shared/navigation/AppNavigation.svelte";
+  import WorkDayEditPage from "./work_day/edit/WorkDayEditPage.svelte";
   import WorkMonthDetailPage from "./work_month/detail/WorkMonthDetailPage.svelte";
   import WorkMonthListPage from "./work_month/list/WorkMonthListPage.svelte";
   import WorkTypeListPage from "./work_type/list/WorkTypeListPage.svelte";
@@ -17,6 +18,7 @@
 
     "/months": WorkMonthListPage,
     "/months/:id": WorkMonthDetailPage,
+    "/months/:id/:day": WorkDayEditPage,
 
     "/types": WorkTypeListPage,
 
