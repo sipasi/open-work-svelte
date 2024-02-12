@@ -6,13 +6,13 @@
   import MonthTile from "./MonthTile.svelte";
   import EntityStorage from "$root/repository/EntityStorage";
   import { push } from "svelte-spa-router";
+  import WorkCalculator from "$root/tool/WorkCalculator";
 
   const storage = getContext(
     EntityStorage<WorkMonth>
   ) as EntityStorage<WorkMonth>;
 
   function onClick(item: WorkMonth) {
-    console.info(item);
     push(`/months/${item.id.toString()}`);
   }
 </script>
@@ -22,7 +22,11 @@
 {:then list}
   <ul class="adaptive-list-view">
     {#each list as item}
-      <MonthTile date={item.date} sum={233} on:click={() => onClick(item)} />
+      <MonthTile
+        date={item.date}
+        sum={WorkCalculator.calculateMonth(item)}
+        on:click={() => onClick(item)}
+      />
     {/each}
   </ul>
   <IconFab icon={Icons.add} />

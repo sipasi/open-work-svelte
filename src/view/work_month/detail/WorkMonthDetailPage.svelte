@@ -1,9 +1,11 @@
 <script lang="ts">
-  import type WorkDay from "$root/data/WorkDay";
+  import WorkCalculator from "$root/tool/WorkCalculator";
   import type WorkMonth from "$root/data/WorkMonth";
   import EntityStorage from "$root/repository/EntityStorage";
   import Divider from "$root/view/shared/divider/Divider.svelte";
   import { getContext } from "svelte";
+  import DateToText from "$root/tool/DateToText";
+  import { push } from "svelte-spa-router";
 
   export let params: any;
 
@@ -11,63 +13,53 @@
     EntityStorage<WorkMonth>
   ) as EntityStorage<WorkMonth>;
 
-  function formatDay(date: Date, day: number) {
-    const temp = new Date(date);
-
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      day: "numeric",
-    };
-
-    temp.setDate(day);
-
-    return temp.toLocaleDateString("en-US", options);
-  }
-  function formatMonth(date: Date) {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-    };
-
-    return date.toLocaleDateString("en-US", options);
+  function onClick(month: number, day: number) {
+    push(`/months/${month}/${day}`);
   }
 </script>
 
-<ul class="list">
-  {#if params.id}
-    {#await storage.getBy(params.id) then month}
-      <h1 class="month-title">
-        {formatMonth(month.date)}
-      </h1>
+{#if params.id}
+  {#await storage.getBy(params.id) then month}
+    <h1 class="month-title">
+      {DateToText.yearNumMonthText(month.date)}
+    </h1>
 
+    <ul>
       {#each month.days as item}
-        <li class="item">
-          <div class="header">
-            <span>
-              {formatDay(month.date, item.day)}
-            </span>
-            <span>
-              {1332}
-            </span>
-          </div>
-
-          <Divider type="round" />
-
-          {#each item.works as work}
-            <div class="work-info">
-              <span class="work-info-type">
-                {work.type}:&nbsp;
+        <li>
+          <a class="item"
+            href={null}
+            on:click|preventDefault={() => onClick(month.id, item.day)}
+          >
+            <div class="header">
+              <span>
+                {DateToText.dayNumMonthText(month.date, item.day)}
               </span>
               <span>
-                {work.units.join(",")}
+                {WorkCalculator.calculateWorks(item.works)}
               </span>
             </div>
-          {/each}
+
+            <Divider type="round" />
+
+            <ul>
+              {#each item.works as work}
+                <li class="work-info">
+                  <span class="work-info-type">
+                    {work.type.name}:&nbsp;
+                  </span>
+                  <span>
+                    {work.units.join(", ")}
+                  </span>
+                </li>
+              {/each}
+            </ul>
+          </a>
         </li>
       {/each}
-    {/await}
-  {/if}
-</ul>
+    </ul>
+  {/await}
+{/if}
 
 <style>
   .month-title {
@@ -76,14 +68,11 @@
     margin-bottom: 1rem;
   }
 
-  .list {
-    list-style: none;
-  }
-
   .item {
     display: flex;
     flex-direction: column;
     padding: 20px;
+    cursor: pointer;
   }
   .item:hover {
     background-color: #212121;
@@ -91,15 +80,32 @@
   .item:active {
     background-color: #424242;
   }
+  .item:active {
+    background-color: #424242;
+  }
+  .item a {
+    text-decoration: none;
+    color: white;
+  }
+
   .header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
   }
   .work-info {
-    display: flex;
+    display: block;
+    margin-top: 10px;
   }
-  .work-info-type {
+  ul :first-child.work-info {
+    margin-top: 0;
+  }
+
+  .work-info :first-child {
     font-weight: bold;
   }
+
+  /* .work-info-type {
+    font-weight: bold;
+  } */
 </style>
