@@ -1,6 +1,6 @@
 <script lang="ts">
-  import RawWorkCalculator from "$root/data/RawWorkCalculator";
   import type WorkType from "$root/data/WorkType";
+  import RawWorkCalculator from "$root/tool/RawWorkCalculator";
 
   export let input: string;
   export let name: string;
