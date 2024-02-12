@@ -1,9 +1,12 @@
 import CalculationType from "$root/data/CalculationType";
+import Work from "$root/data/Work";
 import WorkDay from "$root/data/WorkDay";
 import WorkMonth from "$root/data/WorkMonth";
 import WorkType from "$root/data/WorkType";
 import EntityStorage from "../EntityStorage";
 import FakeStorage from "./FakeStorage";
+
+import { faker } from "@faker-js/faker";
 
 class FakeCreator {
   static createFakeMonths(): EntityStorage<WorkMonth> {
@@ -19,20 +22,39 @@ class FakeCreator {
 
     const dayCount = new Date(year, month + 1, 0).getDate();
 
-    const days = FakeCreator.createDays(dayCount);
     const types = FakeCreator.createTypes();
+    const days = FakeCreator.createDays(dayCount, types);
 
     return new WorkMonth({ id: id, date: date, days: days, types: types });
   }
 
-  private static createDays(count: number): WorkDay[] {
+  private static createDays(count: number, types: WorkType[]): WorkDay[] {
     const days = Array.from(
       { length: count },
-      (_, index) => new WorkDay({ day: index + 1, works: [] })
+      (_, index) =>
+        new WorkDay({
+          day: index + 1,
+          works: FakeCreator.createWorks(this.getRandomInt(13), types),
+        })
     );
 
     return days;
   }
+
+  private static createWorks(count: number, types: WorkType[]): Work[] {
+    return types.map((type) => {
+      let units = Array.from({ length: count }, (_) => {
+        return type.calculation == CalculationType.hour
+          ? this.getRandomInt(7).toString()
+          : faker.person.fullName();
+      });
+
+      const work = new Work(type, units);
+
+      return work;
+    });
+  }
+
   private static createTypes(): WorkType[] {
     return [
       new WorkType({
@@ -54,6 +76,10 @@ class FakeCreator {
         price: 1,
       }),
     ];
+  }
+
+  private static getRandomInt(max: number): number {
+    return Math.floor(Math.random() * max);
   }
 }
 
