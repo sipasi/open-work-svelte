@@ -5,7 +5,7 @@
   export let icon: Icons;
 </script>
 
-<button class="fab-square">
+<button class="fab-square" on:click>
   <SvgIcon type={icon} />
 </button>
 
